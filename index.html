@@ -4,153 +4,234 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sqoop</title>
+    <title>Sqoop: Data Transfer</title>
+    <style>
+        /* Modern Dark Theme CSS for Readability */
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        nav {
+            background-color: #1e1e1e;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        a {
+            color: #64b5f6;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a:hover {
+            text-decoration: underline;
+            color: #90caf9;
+        }
+
+        h2 {
+            color: #ffffff;
+            border-bottom: 2px solid #333;
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+
+        h3 {
+            color: #90caf9;
+            margin-top: 30px;
+        }
+
+        p,
+        li {
+            font-size: 16px;
+        }
+
+        ol {
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        /* Styling for inline code */
+        code {
+            background-color: #2c2c2c;
+            color: #ffb74d;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.95em;
+        }
+
+        /* Styling for code blocks */
+        pre {
+            background-color: #1e1e1e;
+            border-left: 4px solid #64b5f6;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+
+        pre code {
+            background-color: transparent;
+            color: #a6accd;
+            padding: 0;
+        }
+
+        .output-console {
+            border-left-color: #81c784;
+            color: #c5e1a5;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #333;
+            margin: 40px 0;
+        }
+
+        .footer-link {
+            font-size: 14px;
+            color: #757575;
+            text-align: center;
+            display: block;
+        }
+    </style>
 </head>
 
-<body style="background-color: black; color: white;">
-    <nav>
-        <a href="index.html" style="color: lightblue;">Data transfer between Hadoop and RDBMS</a> &nbsp; | &nbsp;
-        <a href="logistic.html" style="color: lightblue;">logistic</a>
-    </nav>
-    <br>
+<body>
 
-    <pre><code>
-### **Aim**
+    <h2>Aim</h2>
+    <p>To install Apache Sqoop 1.4.7 on Ubuntu, connect it with the existing Hadoop installation, install the required
+        Java libraries and MySQL JDBC driver, configure a dedicated MySQL user, and verify that Sqoop is ready to
+        communicate with the relational database server.</p>
 
-To install Apache Sqoop 1.4.7 on Ubuntu, connect it with the existing Hadoop installation, install the required Java libraries and MySQL JDBC driver, configure a dedicated MySQL user, and verify that Sqoop is ready to communicate with the relational database server.
+    <h2>Short Theory</h2>
+    <p>Apache Sqoop (derived from "SQL-to-Hadoop") is a command-line utility designed to transfer structured data
+        efficiently between relational databases (like MySQL) and the Hadoop ecosystem. Since relational databases store
+        data in tables and Hadoop stores data in distributed HDFS files, Sqoop acts as the transfer bridge using a JDBC
+        driver to connect both environments.</p>
 
-### **Short Theory**
+    <h2>Steps and Code</h2>
 
-Apache Sqoop (derived from "SQL-to-Hadoop") is a command-line utility designed to transfer structured data efficiently between relational databases (like MySQL) and the Hadoop ecosystem. Since relational databases store data in tables and Hadoop stores data in distributed HDFS files, Sqoop acts as the transfer bridge using a JDBC driver to connect both environments.
+    <h3>Part A: Installation and Configuration</h3>
+    <ol>
+        <li>
+            <strong>Extract Sqoop:</strong> Extract the downloaded Sqoop archive and move it to a permanent directory.
+            <pre><code>sudo mv sqoop-1.4.7.bin_hadoop-2.6.0 /usr/local/sqoop</code></pre>
+        </li>
+        <li>
+            <strong>Set Environment Variables:</strong> Add Sqoop to the Linux environment by editing
+            <code>~/.bashrc</code>:
+            <pre><code>export SQOOP_HOME=/usr/local/sqoop
+export PATH=$PATH:$HADOOP_HOME/bin:$SQOOP_HOME/bin</code></pre>
+        </li>
+        <li>
+            <strong>Link Hadoop to Sqoop:</strong> Copy <code>sqoop-env-template.sh</code> to <code>sqoop-env.sh</code>
+            and set <code>HADOOP_COMMON_HOME</code> and <code>HADOOP_MAPRED_HOME</code> to
+            <code>/usr/local/hadoop</code>.
+        </li>
+        <li>
+            <strong>Add Database Driver:</strong> Copy the MySQL JDBC driver
+            (<code>mysql-connector-java-5.1.49.jar</code>) into the <code>/usr/local/sqoop/lib/</code> directory so
+            Sqoop can communicate with MySQL.
+        </li>
+    </ol>
 
-### **Steps or Code**
-
-**Part A: Installation and Configuration**
-
-1. **Extract Sqoop:** Extract the downloaded Sqoop archive and move it to a permanent directory: `sudo mv sqoop-1.4.7.bin_hadoop-2.6.0 /usr/local/sqoop`.
-
-
-2. **Set Environment Variables:** Add Sqoop to the Linux environment by editing `~/.bashrc`:
-```bash
-export SQOOP_HOME=/usr/local/sqoop
-export PATH=$PATH:$HADOOP_HOME/bin:$SQOOP_HOME/bin
-```[cite: 8]
-
-```
-
-
-3. **Link Hadoop to Sqoop:** Copy `sqoop-env-template.sh` to `sqoop-env.sh` and set `HADOOP_COMMON_HOME` and `HADOOP_MAPRED_HOME` to `/usr/local/hadoop`.
-
-
-4. **Add Database Driver:** Copy the MySQL JDBC driver (`mysql-connector-java-5.1.49.jar`) into the `/usr/local/sqoop/lib/` directory so Sqoop can communicate with MySQL.
-
-
-
-**Part B: Database Preparation (MySQL)**
-
-1. **Open MySQL:** Execute `sudo mysql` in the terminal.
-
-
-2. **Create Sqoop User:** `CREATE USER 'sqoopuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Sqoop123';`.
-
-
-3. **Create Database and Table:**
-```sql
-CREATE DATABASE sqoop_demo;
+    <h3>Part B: Database Preparation (MySQL)</h3>
+    <ol>
+        <li>
+            <strong>Open MySQL:</strong> Execute <code>sudo mysql</code> in the terminal.
+        </li>
+        <li>
+            <strong>Create Sqoop User:</strong>
+            <pre><code>CREATE USER 'sqoopuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Sqoop123';</code></pre>
+        </li>
+        <li>
+            <strong>Create Database and Table:</strong>
+            <pre><code>CREATE DATABASE sqoop_demo;
 USE sqoop_demo;
-CREATE TABLE employee (emp_id INT PRIMARY KEY, emp_name VARCHAR(50), department VARCHAR(30), salary INT);
-```[cite: 28, 29]
+CREATE TABLE employee (emp_id INT PRIMARY KEY, emp_name VARCHAR(50), department VARCHAR(30), salary INT);</code></pre>
+        </li>
+        <li>
+            <strong>Insert Records:</strong>
+            <pre><code>INSERT INTO employee VALUES 
+(1,'Aarav','CSE',45000), 
+(2,'Diya','IT',55000), 
+(3,'Kabir','AI',62000), 
+(4,'Meera','CSE',48000), 
+(5,'Rohan','Data Science',70000);</code></pre>
+        </li>
+        <li>
+            <strong>Grant Permissions:</strong>
+            <pre><code>GRANT ALL PRIVILEGES ON sqoop_demo.* TO 'sqoopuser'@'localhost'; 
+FLUSH PRIVILEGES;</code></pre>
+        </li>
+    </ol>
 
-```
-
-
-4. **Insert Records:**
-```sql
-INSERT INTO employee VALUES (1,'Aarav','CSE',45000), (2,'Diya','IT',55000), (3,'Kabir','AI',62000), (4,'Meera','CSE',48000), (5,'Rohan','Data Science',70000);
-```[cite: 30]
-
-```
-
-
-5. **Grant Permissions:** `GRANT ALL PRIVILEGES ON sqoop_demo.* TO 'sqoopuser'@'localhost'; FLUSH PRIVILEGES;`.
-
-
-
-**Part C: Sqoop Execution (Data Transfer)**
-
-1. **Test Connectivity:**
-```bash
-sqoop list-databases --connect "jdbc:mysql://localhost:3306/?useSSL=false" --username sqoopuser -P
-```[cite: 32]
-
-```
-
-
-2. **Full Table Import into HDFS:**
-```bash
-sqoop import \
+    <h3>Part C: Sqoop Execution (Data Transfer)</h3>
+    <ol>
+        <li>
+            <strong>Test Connectivity:</strong>
+            <pre><code>sqoop list-databases --connect "jdbc:mysql://localhost:3306/?useSSL=false" --username sqoopuser -P</code></pre>
+        </li>
+        <li>
+            <strong>Full Table Import into HDFS:</strong>
+            <pre><code>sqoop import \
 --connect "jdbc:mysql://localhost:3306/sqoop_demo?useSSL=false" \
 --username sqoopuser -P \
 --table employee \
 --target-dir /sqoop/employee_data \
---num-mappers 1
-```[cite: 35]
-
-```
-
-
-3. **Filtered Table Import:**
-```bash
-sqoop import \
+--num-mappers 1</code></pre>
+        </li>
+        <li>
+            <strong>Filtered Table Import:</strong>
+            <pre><code>sqoop import \
 --connect "jdbc:mysql://localhost:3306/sqoop_demo?useSSL=false" \
 --username sqoopuser -P \
 --table employee \
 --where "salary > 50000" \
 --target-dir /sqoop/high_salary \
---num-mappers 1
-```[cite: 38]
+--num-mappers 1</code></pre>
+        </li>
+    </ol>
 
+    <h2>Output Verification</h2>
 
-```
-
-
-
-### **Output**
-
-**1. Verification of Full Import in HDFS:**
-
-```bash
-hdfs dfs -cat /sqoop/employee_data/part-m-00000
-```[cite: 37]
-*Output Console:*
-```text
-1,Aarav,CSE,45000
+    <p><strong>1. Verification of Full Import in HDFS:</strong></p>
+    <pre><code>hdfs dfs -cat /sqoop/employee_data/part-m-00000</code></pre>
+    <pre class="output-console"><code>1,Aarav,CSE,45000
 2,Diya,IT,55000
 3,Kabir,AI,62000
 4,Meera,CSE,48000
-5,Rohan,Data Science,70000
-```[cite: 37]
+5,Rohan,Data Science,70000</code></pre>
 
-**2. Verification of Filtered Import in HDFS:**
-```bash
-hdfs dfs -cat /sqoop/high_salary/part-m-00000
-```[cite: 39]
-*Output Console:*
-```text
-2,Diya,IT,55000
+    <p><strong>2. Verification of Filtered Import in HDFS:</strong></p>
+    <pre><code>hdfs dfs -cat /sqoop/high_salary/part-m-00000</code></pre>
+    <pre class="output-console"><code>2,Diya,IT,55000
 3,Kabir,AI,62000
-5,Rohan,Data Science,70000
-```[cite: 39]
+5,Rohan,Data Science,70000</code></pre>
 
-### **Conclusion**
-Apache Sqoop 1.4.7 was successfully configured on Ubuntu with the necessary Hadoop paths and MySQL JDBC drivers[cite: 39]. A dedicated `sqoop_demo` database and `employee` table were created in MySQL, and records were seamlessly transferred to HDFS using `sqoop import`[cite: 39]. The practical concluded by successfully verifying both full and filtered (`salary > 50000`) data imports using standard HDFS commands[cite: 38, 39].
+    <h2>Conclusion</h2>
+    <p>Apache Sqoop 1.4.7 was successfully configured on Ubuntu with the necessary Hadoop paths and MySQL JDBC drivers.
+        A dedicated <code>sqoop_demo</code> database and <code>employee</code> table were created in MySQL, and records
+        were seamlessly transferred to HDFS using <code>sqoop import</code>. The practical concluded by successfully
+        verifying both full and filtered (<code>salary > 50000</code>) data imports using standard HDFS commands.</p>
 
-```
-    </code></pre>
-    <br>
     <hr>
-    <br>
-    https://share.gemini.google/wyn6n9YoopJ1
+    <a href="[https://share.gemini.google/wyn6n9YoopJ1](https://share.gemini.google/wyn6n9YoopJ1)" class="footer-link"
+        target="_blank">Original Reference Link</a>
+
 </body>
 
 </html>
