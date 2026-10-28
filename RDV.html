@@ -1,0 +1,124 @@
+# DATA VISUALIZATION USING R
+# Big Data Analysis Practical
+
+# 1. Create Dataset
+sales_data <- data.frame(
+  Month = c("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+            "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"),
+  Sales_2025 = c(120, 150, 140, 180, 200, 190,
+                 220, 210, 240, 260, 250, 300),
+  Sales_2026 = c(130, 160, 155, 190, 210, 205,
+                 230, 225, 250, 270, 265, 320)
+)
+
+# Add some missing values for demonstration
+sales_data$Sales_2025[3] <- NA
+sales_data$Sales_2026[8] <- NA
+
+print("Original Sales Dataset:")
+print(sales_data)
+
+
+# 2. Check Missing Values
+print("Missing Values in Each Column:")
+print(colSums(is.na(sales_data)))
+
+# Remove rows containing missing values for analysis
+clean_data <- na.omit(sales_data)
+
+print("Cleaned Dataset:")
+print(clean_data)
+
+
+# 3. Bar Chart of Monthly Sales
+barplot(
+  sales_data$Sales_2025,
+  names.arg = sales_data$Month,
+  main = "Monthly Sales in 2025",
+  xlab = "Month",
+  ylab = "Sales",
+  col = "skyblue",
+  las = 2
+)
+
+
+# 4. Line Chart of Sales Trend
+plot(
+  clean_data$Sales_2025,
+  type = "o",
+  xaxt = "n",
+  main = "Monthly Sales Trend - 2025",
+  xlab = "Month",
+  ylab = "Sales",
+  col = "blue",
+  pch = 16
+)
+
+axis(
+  1,
+  at = seq_len(nrow(clean_data)),
+  labels = clean_data$Month
+)
+
+
+# 5. Scatter Plot with Regression Line
+plot(
+  clean_data$Sales_2025,
+  clean_data$Sales_2026,
+  main = "Sales 2025 vs Sales 2026",
+  xlab = "Sales 2025",
+  ylab = "Sales 2026",
+  col = "red",
+  pch = 19
+)
+
+model <- lm(Sales_2026 ~ Sales_2025, data = clean_data)
+
+abline(model, col = "blue", lwd = 2)
+
+print("Regression Model:")
+print(summary(model))
+
+
+# 6. Histogram
+hist(
+  clean_data$Sales_2025,
+  main = "Distribution of Sales in 2025",
+  xlab = "Sales",
+  ylab = "Frequency",
+  col = "lightgreen",
+  border = "black"
+)
+
+
+# 7. Box Plot
+boxplot(
+  clean_data$Sales_2025,
+  main = "Box Plot of Sales in 2025",
+  ylab = "Sales",
+  col = "orange"
+)
+
+
+# 8. Comparative Bar Chart
+comparison <- rbind(
+  clean_data$Sales_2025,
+  clean_data$Sales_2026
+)
+
+colnames(comparison) <- clean_data$Month
+rownames(comparison) <- c("2025", "2026")
+
+barplot(
+  comparison,
+  beside = TRUE,
+  main = "Monthly Sales Comparison: 2025 vs 2026",
+  xlab = "Month",
+  ylab = "Sales",
+  col = c("skyblue", "orange"),
+  legend.text = TRUE,
+  args.legend = list(x = "topleft", bty = "n"),
+  las = 2
+)
+
+print("All graphs generated successfully!")
