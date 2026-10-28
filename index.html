@@ -4,93 +4,217 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sqoop: Data Transfer</title>
+    <title>Sqoop: Windows Terminal</title>
     <style>
-        /* Modern Dark Theme CSS for Readability */
-        body {
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 30px 20px;
+        /* Base Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        nav {
-            background-color: #1e1e1e;
-            padding: 15px 20px;
-            border-radius: 8px;
-            margin-bottom: 30px;
+        /* Fullscreen Body */
+        body {
+            background-color: black;
+            font-family: Consolas, 'Courier New', monospace;
+            color: #cccccc;
+            height: 100vh;
             display: flex;
-            gap: 15px;
+            flex-direction: column;
+            overflow: hidden;
+            /* Hide outer scroll, handle inside terminal */
+        }
+
+        /* Windows 11 Terminal Title Bar */
+        .title-bar {
+            background-color: #1c1c1c;
+            /* Windows dark mode title bar */
+            height: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            /* Align tabs to bottom */
+            user-select: none;
+        }
+
+        /* Tabs Section */
+        .tabs {
+            display: flex;
+            height: 32px;
+            margin-left: 8px;
+        }
+
+        .tab {
+            background-color: black;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            border-radius: 6px 6px 0 0;
+            gap: 10px;
+            min-width: 150px;
+        }
+
+        /* Ubuntu logo placeholder in tab */
+        .tab-icon {
+            color: #e95420;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        /* Windows Control Buttons */
+        .window-controls {
+            display: flex;
+            height: 40px;
+            align-items: flex-start;
+        }
+
+        .control-btn {
+            width: 46px;
+            height: 32px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #cccccc;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .control-btn:hover {
+            background-color: #333333;
+        }
+
+        .control-btn.close:hover {
+            background-color: #e81123;
+            color: white;
+        }
+
+        /* Terminal Content Area */
+        .terminal-content {
+            background-color: black;
+            flex-grow: 1;
+            padding: 20px 30px;
+            overflow-y: auto;
+            /* Enable scrolling here */
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Custom Windows Dark Scrollbar */
+        .terminal-content::-webkit-scrollbar {
+            width: 14px;
+        }
+
+        .terminal-content::-webkit-scrollbar-track {
+            background: black;
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb {
+            background: #4d4d4d;
+            border: 4px solid black;
+            border-radius: 10px;
+        }
+
+        .terminal-content::-webkit-scrollbar-thumb:hover {
+            background: #7a7a7a;
+        }
+
+        /* Links styling */
+        nav {
+            margin-bottom: 30px;
+            border-bottom: 1px dashed #555;
+            padding-bottom: 15px;
         }
 
         a {
-            color: #64b5f6;
+            color: #3b78ff;
             text-decoration: none;
-            font-weight: 500;
         }
 
         a:hover {
             text-decoration: underline;
-            color: #90caf9;
+            color: #6bb0ff;
         }
 
+        /* Executed command headings */
         h2 {
-            color: #ffffff;
-            border-bottom: 2px solid #333;
-            padding-bottom: 8px;
+            font-size: 1.1em;
             margin-top: 40px;
+            font-weight: normal;
+            color: #cccccc;
+        }
+
+        h2::before {
+            content: "sqoopuser@ubuntu:~$ cat ";
+            color: #16c60c;
+            /* Windows Terminal Campbell Green */
+            font-weight: bold;
         }
 
         h3 {
-            color: #90caf9;
+            color: #f9f1a5;
+            font-size: 1.05em;
             margin-top: 30px;
+            text-decoration: underline text-decoration-style: dashed;
         }
 
-        p,
-        li {
-            font-size: 16px;
-        }
-
+        /* Lists */
         ol {
-            padding-left: 20px;
+            padding-left: 25px;
         }
 
         li {
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        /* Styling for inline code */
-        code {
-            background-color: #2c2c2c;
-            color: #ffb74d;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.95em;
-        }
-
-        /* Styling for code blocks */
+        /* Code Blocks */
         pre {
-            background-color: #1e1e1e;
-            border-left: 4px solid #64b5f6;
+            background-color: #0c0c0c;
             padding: 15px;
+            border: 1px solid #333;
             border-radius: 4px;
             overflow-x: auto;
             margin: 10px 0;
         }
 
-        pre code {
-            background-color: transparent;
-            color: #a6accd;
-            padding: 0;
+        /* Inline code */
+        p code,
+        li code {
+            background-color: #1a1a1a;
+            padding: 2px 5px;
+            border: 1px solid #333;
+            border-radius: 3px;
+            color: #d7ba7d;
+            /* VS Code yellow-ish for vars */
         }
 
-        .output-console {
-            border-left-color: #81c784;
-            color: #c5e1a5;
+        /* Prompts */
+        .prompt {
+            color: #16c60c;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        /* Green */
+        .mysql-prompt {
+            color: #3b78ff;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        /* Blue */
+        .hdfs-prompt {
+            color: #e74856;
+            font-weight: bold;
+            user-select: none;
+        }
+
+        /* Red */
+        .output {
+            color: #f2f2f2;
         }
 
         hr {
@@ -102,136 +226,179 @@
 
         .footer-link {
             font-size: 14px;
-            color: #757575;
+            color: #777;
             text-align: center;
             display: block;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        /* Blinking Cursor Animation */
+        .blink {
+            display: inline-block;
+            width: 8px;
+            height: 18px;
+            background-color: #cccccc;
+            animation: blinker 1s step-end infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes blinker {
+            50% {
+                opacity: 0;
+            }
         }
     </style>
 </head>
 
 <body>
+    <!-- Windows Title Bar -->
+    <div class="title-bar">
+        <div class="tabs">
+            <div class="tab">
+                <span class="tab-icon">O</span> <!-- Ubuntu icon placeholder -->
+                Ubuntu (WSL)
+            </div>
+        </div>
+        <div class="window-controls">
+            <div class="control-btn">─</div>
+            <div class="control-btn">◻</div>
+            <div class="control-btn close">✕</div>
+        </div>
+    </div>
 
-    <h2>Aim</h2>
-    <p>To install Apache Sqoop 1.4.7 on Ubuntu, connect it with the existing Hadoop installation, install the required
-        Java libraries and MySQL JDBC driver, configure a dedicated MySQL user, and verify that Sqoop is ready to
-        communicate with the relational database server.</p>
+    <!-- Terminal Content Fullscreen Area -->
+    <div class="terminal-content">
+        <nav>
+            <span class="prompt">sqoopuser@ubuntu:~$</span> ls -l ~/shortcuts <br>
+            lrwxrwxrwx 1 sqoopuser <a href="index.html">Data_transfer_between_Hadoop_and_RDBMS.html</a> <br>
+        </nav>
 
-    <h2>Short Theory</h2>
-    <p>Apache Sqoop (derived from "SQL-to-Hadoop") is a command-line utility designed to transfer structured data
-        efficiently between relational databases (like MySQL) and the Hadoop ecosystem. Since relational databases store
-        data in tables and Hadoop stores data in distributed HDFS files, Sqoop acts as the transfer bridge using a JDBC
-        driver to connect both environments.</p>
+        <h2>Aim.txt</h2>
+        <p>To install Apache Sqoop 1.4.7 on Ubuntu, connect it with the existing Hadoop installation, install the
+            required Java libraries and MySQL JDBC driver, configure a dedicated MySQL user, and verify that Sqoop is
+            ready to communicate with the relational database server.</p>
 
-    <h2>Steps and Code</h2>
+        <h2>Theory.md</h2>
+        <p>Apache Sqoop (derived from "SQL-to-Hadoop") is a command-line utility designed to transfer structured data
+            efficiently between relational databases (like MySQL) and the Hadoop ecosystem. Since relational databases
+            store data in tables and Hadoop stores data in distributed HDFS files, Sqoop acts as the transfer bridge
+            using a JDBC driver to connect both environments.</p>
 
-    <h3>Part A: Installation and Configuration</h3>
-    <ol>
-        <li>
-            <strong>Extract Sqoop:</strong> Extract the downloaded Sqoop archive and move it to a permanent directory.
-            <pre><code>sudo mv sqoop-1.4.7.bin_hadoop-2.6.0 /usr/local/sqoop</code></pre>
-        </li>
-        <li>
-            <strong>Set Environment Variables:</strong> Add Sqoop to the Linux environment by editing
-            <code>~/.bashrc</code>:
-            <pre><code>export SQOOP_HOME=/usr/local/sqoop
+        <h2>Steps.sh</h2>
+
+        <h3># Part A: Installation and Configuration</h3>
+        <ol>
+            <li>
+                <strong>Extract Sqoop:</strong> Extract the downloaded Sqoop archive and move it to a permanent
+                directory.
+                <pre><code><span class="prompt">sqoopuser@ubuntu:~$</span> sudo mv sqoop-1.4.7.bin_hadoop-2.6.0 /usr/local/sqoop</code></pre>
+            </li>
+            <li>
+                <strong>Set Environment Variables:</strong> Add Sqoop to the Linux environment by editing
+                <code>~/.bashrc</code>:
+                <pre><code><span class="prompt">sqoopuser@ubuntu:~$</span> nano ~/.bashrc
+export SQOOP_HOME=/usr/local/sqoop
 export PATH=$PATH:$HADOOP_HOME/bin:$SQOOP_HOME/bin</code></pre>
-        </li>
-        <li>
-            <strong>Link Hadoop to Sqoop:</strong> Copy <code>sqoop-env-template.sh</code> to <code>sqoop-env.sh</code>
-            and set <code>HADOOP_COMMON_HOME</code> and <code>HADOOP_MAPRED_HOME</code> to
-            <code>/usr/local/hadoop</code>.
-        </li>
-        <li>
-            <strong>Add Database Driver:</strong> Copy the MySQL JDBC driver
-            (<code>mysql-connector-java-5.1.49.jar</code>) into the <code>/usr/local/sqoop/lib/</code> directory so
-            Sqoop can communicate with MySQL.
-        </li>
-    </ol>
+            </li>
+            <li>
+                <strong>Link Hadoop to Sqoop:</strong> Copy <code>sqoop-env-template.sh</code> to
+                <code>sqoop-env.sh</code> and set <code>HADOOP_COMMON_HOME</code> and <code>HADOOP_MAPRED_HOME</code> to
+                <code>/usr/local/hadoop</code>.
+            </li>
+            <li>
+                <strong>Add Database Driver:</strong> Copy the MySQL JDBC driver
+                (<code>mysql-connector-java-5.1.49.jar</code>) into the <code>/usr/local/sqoop/lib/</code> directory so
+                Sqoop can communicate with MySQL.
+            </li>
+        </ol>
 
-    <h3>Part B: Database Preparation (MySQL)</h3>
-    <ol>
-        <li>
-            <strong>Open MySQL:</strong> Execute <code>sudo mysql</code> in the terminal.
-        </li>
-        <li>
-            <strong>Create Sqoop User:</strong>
-            <pre><code>CREATE USER 'sqoopuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Sqoop123';</code></pre>
-        </li>
-        <li>
-            <strong>Create Database and Table:</strong>
-            <pre><code>CREATE DATABASE sqoop_demo;
-USE sqoop_demo;
-CREATE TABLE employee (emp_id INT PRIMARY KEY, emp_name VARCHAR(50), department VARCHAR(30), salary INT);</code></pre>
-        </li>
-        <li>
-            <strong>Insert Records:</strong>
-            <pre><code>INSERT INTO employee VALUES 
-(1,'Aarav','CSE',45000), 
-(2,'Diya','IT',55000), 
-(3,'Kabir','AI',62000), 
-(4,'Meera','CSE',48000), 
-(5,'Rohan','Data Science',70000);</code></pre>
-        </li>
-        <li>
-            <strong>Grant Permissions:</strong>
-            <pre><code>GRANT ALL PRIVILEGES ON sqoop_demo.* TO 'sqoopuser'@'localhost'; 
-FLUSH PRIVILEGES;</code></pre>
-        </li>
-    </ol>
+        <h3># Part B: Database Preparation (MySQL)</h3>
+        <ol>
+            <li>
+                <strong>Open MySQL:</strong> Execute <code>sudo mysql</code> in the terminal.
+            </li>
+            <li>
+                <strong>Create Sqoop User:</strong>
+                <pre><code><span class="mysql-prompt">mysql></span> CREATE USER 'sqoopuser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'Sqoop123';</code></pre>
+            </li>
+            <li>
+                <strong>Create Database and Table:</strong>
+                <pre><code><span class="mysql-prompt">mysql></span> CREATE DATABASE sqoop_demo;
+<span class="mysql-prompt">mysql></span> USE sqoop_demo;
+<span class="mysql-prompt">mysql></span> CREATE TABLE employee (emp_id INT PRIMARY KEY, emp_name VARCHAR(50), department VARCHAR(30), salary INT);</code></pre>
+            </li>
+            <li>
+                <strong>Insert Records:</strong>
+                <pre><code><span class="mysql-prompt">mysql></span> INSERT INTO employee VALUES 
+    -> (1,'Aarav','CSE',45000), 
+    -> (2,'Diya','IT',55000), 
+    -> (3,'Kabir','AI',62000), 
+    -> (4,'Meera','CSE',48000), 
+    -> (5,'Rohan','Data Science',70000);</code></pre>
+            </li>
+            <li>
+                <strong>Grant Permissions:</strong>
+                <pre><code><span class="mysql-prompt">mysql></span> GRANT ALL PRIVILEGES ON sqoop_demo.* TO 'sqoopuser'@'localhost'; 
+<span class="mysql-prompt">mysql></span> FLUSH PRIVILEGES;</code></pre>
+            </li>
+        </ol>
 
-    <h3>Part C: Sqoop Execution (Data Transfer)</h3>
-    <ol>
-        <li>
-            <strong>Test Connectivity:</strong>
-            <pre><code>sqoop list-databases --connect "jdbc:mysql://localhost:3306/?useSSL=false" --username sqoopuser -P</code></pre>
-        </li>
-        <li>
-            <strong>Full Table Import into HDFS:</strong>
-            <pre><code>sqoop import \
+        <h3># Part C: Sqoop Execution (Data Transfer)</h3>
+        <ol>
+            <li>
+                <strong>Test Connectivity:</strong>
+                <pre><code><span class="prompt">sqoopuser@ubuntu:~$</span> sqoop list-databases --connect "jdbc:mysql://localhost:3306/?useSSL=false" --username sqoopuser -P</code></pre>
+            </li>
+            <li>
+                <strong>Full Table Import into HDFS:</strong>
+                <pre><code><span class="prompt">sqoopuser@ubuntu:~$</span> sqoop import \
 --connect "jdbc:mysql://localhost:3306/sqoop_demo?useSSL=false" \
 --username sqoopuser -P \
 --table employee \
 --target-dir /sqoop/employee_data \
 --num-mappers 1</code></pre>
-        </li>
-        <li>
-            <strong>Filtered Table Import:</strong>
-            <pre><code>sqoop import \
+            </li>
+            <li>
+                <strong>Filtered Table Import:</strong>
+                <pre><code><span class="prompt">sqoopuser@ubuntu:~$</span> sqoop import \
 --connect "jdbc:mysql://localhost:3306/sqoop_demo?useSSL=false" \
 --username sqoopuser -P \
 --table employee \
 --where "salary > 50000" \
 --target-dir /sqoop/high_salary \
 --num-mappers 1</code></pre>
-        </li>
-    </ol>
+            </li>
+        </ol>
 
-    <h2>Output Verification</h2>
+        <h2>Output_Verification.log</h2>
 
-    <p><strong>1. Verification of Full Import in HDFS:</strong></p>
-    <pre><code>hdfs dfs -cat /sqoop/employee_data/part-m-00000</code></pre>
-    <pre class="output-console"><code>1,Aarav,CSE,45000
+        <p><strong>1. Verification of Full Import in HDFS:</strong></p>
+        <pre><code><span class="hdfs-prompt">hdfs dfs></span> -cat /sqoop/employee_data/part-m-00000
+<span class="output">1,Aarav,CSE,45000
 2,Diya,IT,55000
 3,Kabir,AI,62000
 4,Meera,CSE,48000
-5,Rohan,Data Science,70000</code></pre>
+5,Rohan,Data Science,70000</span></code></pre>
 
-    <p><strong>2. Verification of Filtered Import in HDFS:</strong></p>
-    <pre><code>hdfs dfs -cat /sqoop/high_salary/part-m-00000</code></pre>
-    <pre class="output-console"><code>2,Diya,IT,55000
+        <p><strong>2. Verification of Filtered Import in HDFS:</strong></p>
+        <pre><code><span class="hdfs-prompt">hdfs dfs></span> -cat /sqoop/high_salary/part-m-00000
+<span class="output">2,Diya,IT,55000
 3,Kabir,AI,62000
-5,Rohan,Data Science,70000</code></pre>
+5,Rohan,Data Science,70000</span></code></pre>
 
-    <h2>Conclusion</h2>
-    <p>Apache Sqoop 1.4.7 was successfully configured on Ubuntu with the necessary Hadoop paths and MySQL JDBC drivers.
-        A dedicated <code>sqoop_demo</code> database and <code>employee</code> table were created in MySQL, and records
-        were seamlessly transferred to HDFS using <code>sqoop import</code>. The practical concluded by successfully
-        verifying both full and filtered (<code>salary > 50000</code>) data imports using standard HDFS commands.</p>
+        <h2>Conclusion.txt</h2>
+        <p>Apache Sqoop 1.4.7 was successfully configured on Ubuntu with the necessary Hadoop paths and MySQL JDBC
+            drivers. A dedicated <code>sqoop_demo</code> database and <code>employee</code> table were created in MySQL,
+            and records were seamlessly transferred to HDFS using <code>sqoop import</code>. The practical concluded by
+            successfully verifying both full and filtered (<code>salary > 50000</code>) data imports using standard HDFS
+            commands.</p>
 
-    <hr>
-    <a href="[https://share.gemini.google/wyn6n9YoopJ1](https://share.gemini.google/wyn6n9YoopJ1)" class="footer-link"
-        target="_blank">Original Reference Link</a>
-
+        <hr>
+        <a href="https://share.gemini.google/wyn6n9YoopJ1" class="footer-link" target="_blank">Document</a>
+        <br>
+        <span class="prompt">sqoopuser@ubuntu:~$</span> <span class="blink"></span>
+        <br><br>
+    </div>
 </body>
 
 </html>
