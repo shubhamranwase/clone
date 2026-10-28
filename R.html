@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ensemble Learning</title>
+</head>
+
+<body style="background-color: black; color: white;">
+<nav>
+    <a href="index.html" style="color: lightblue;">sqoop</a> &nbsp; | &nbsp; 
+    <a href="R.html" style="color: lightblue;">R Code</a>
+</nav>
+<br>
+
+    <pre><code>
+# Load the igraph package
+library(igraph)
+
+# Create friendship data
+friendships <- data.frame(
+  from = c("A", "A", "B", "C", "D", "D", "E"),
+  to = c("B", "C", "C", "D", "E", "F", "F")
+)
+print(friendships)
+
+# Convert friendship data into an undirected graph
+social_network <- graph_from_data_frame(friendships, directed = FALSE)
+print(social_network)
+
+# Create a reproducible graph layout
+set.seed(10)
+network_layout <- layout_with_fr(social_network)
+
+# Display the original social network
+plot(
+  social_network,
+  layout = network_layout,
+  vertex.color = "skyblue",
+  vertex.size = 35,
+  vertex.label.color = "black",
+  vertex.label.cex = 1.2,
+  edge.color = "gray",
+  edge.width = 2,
+  main = "Student Friendship Network"
+)
+
+# Calculate the degree of every node
+node_degree <- degree(social_network)
+print(node_degree)
+
+# Detect communities using the Louvain algorithm
+communities <- cluster_louvain(social_network)
+print(communities)
+
+# Obtain the community number of every node
+community_membership <- membership(communities)
+print(community_membership)
+
+# Assign one colour to each detected community
+community_colors <- c("tomato", "skyblue")[community_membership]
+
+# Display the detected communities
+plot(
+  social_network,
+  layout = network_layout,
+  vertex.color = community_colors,
+  vertex.size = 35,
+  vertex.label.color = "black",
+  vertex.label.cex = 1.2,
+  edge.color = "gray",
+  edge.width = 2,
+  main = "Communities Detected Using Louvain Algorithm"
+)
+
+legend(
+  "topleft",
+  legend = c("Community 1", "Community 2"),
+  pch = 21,
+  pt.bg = c("tomato", "skyblue"),
+  pt.cex = 2,
+  bty = "n"
+)
+
+# Display final numerical results
+cat("Number of communities:", length(communities), "\n")
+cat("Modularity score:", modularity(communities), "\n")
+
+    </code></pre>
+</body>
+
+</html>
