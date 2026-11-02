@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body style="background-color: black; color: white; padding-inline: 2%;">
+    <nav>
+        <a href="index.html" style="color: lightblue;">Code</a> &nbsp; | &nbsp;
+        <a href="theory.html" style="color: lightblue;">Theory</a>
+    </nav>
+    <br>
+    <div>
+        <p>Aim</p>
+        <p>To predict the risk of heart attack from patient data using a Random Forest classifier, evaluate it
+            with accuracy, confusion matrix and classification report, and interpret the important risk factors
+            using SHAP.</p>
+    </div>
+    <div>
+        <p>Algorithm</p>
+        <ol>
+            <li>Load the heart attack prediction dataset.</li>
+            <li>Encode Sex and Diet, split Blood Pressure into systolic and diastolic values and drop
+                unnecessary columns.</li>
+            <li>Separate features and target, standardise the features and split into 70% training and 30%
+                testing data.</li>
+            <li>Train a Random Forest classifier (100 trees, balanced class weights).</li>
+            <li>Predict on the test data and compute accuracy, confusion matrix and classification report.</li>
+            <li>Explain the model with SHAP, plot the summary plot and re-plot it with the class-1 SHAP
+                values.</li>
+        </ol>
+    </div>
+    <div>
+        <p>Conclusion</p>
+        <p>A Random Forest model was built to predict heart-attack risk from patient data and was explained
+            using SHAP. The model reached 63.9% accuracy but detected almost none of the high-risk
+            patients, showing that accuracy is not enough for imbalanced medical data and that recall,
+            resampling and threshold tuning are needed in disease risk prediction.</p>
+    </div>
+</body>
+
+</html>
